@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "default": {
+      "env": ["NODE_DISABLE_COLORS", "TERM"],
+      "run": ["paplay"]
+      "read": ["./record.csv"],
+      "write": ["./record.csv"],
+    }
+  }
+}
