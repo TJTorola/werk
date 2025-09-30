@@ -1,12 +1,26 @@
 import { countdown } from './countdown.ts';
 import * as prompts from './prompts.ts';
-import { writeLine } from './write.ts';
+import { writeLine, getPlan } from './write.ts';
+
+const usePlan = await prompts.usePlan();
+
+let plannedWorkouts: Array<string> = [];
+if (usePlan) {
+  const selectedPlan = await prompts.selectedPlan();
+  plannedWorkouts = await getPlan(selectedPlan);
+}
 
 while (true) {
-  const workout = await prompts.workout();
+  const workout = await prompts.workout(plannedWorkouts);
   if (!workout) {
     break;
   }
+
+  // Filter the selected workout from planned since we have already selected it
+  plannedWorkouts = plannedWorkouts.filter(
+    (plannedWorkout) => plannedWorkout !== workout,
+  );
+
   const restPeriod = await prompts.restPeriod();
   let continueWorkout = true;
   let weight = 50;

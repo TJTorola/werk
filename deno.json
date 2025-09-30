@@ -1,6 +1,7 @@
 {
   "tasks": {
     "start": "deno run -P ./main.ts"
+    "plan": "deno run -P ./plan.ts"
   },
   "imports": {
     "@terkelg/prompts": "npm:prompts@2.4.2"
@@ -9,8 +10,8 @@
     "default": {
       "env": ["NODE_DISABLE_COLORS", "TERM"],
       "run": ["paplay"]
-      "read": ["./record.csv"],
-      "write": ["./record.csv"],
+      "read": ["./record.csv", "./plans"],
+      "write": ["./record.csv", "./plans"],
     }
   }
 }
