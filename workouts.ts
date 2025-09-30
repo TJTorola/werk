@@ -9,7 +9,7 @@ type Movement = string;
 export const WORKOUTS: Record<Equipment, Record<Movement, WorkoutConfig>> = {
   BARBELL: {
     PRESS: {
-      variants: ['NEUTRAL', 'INCLINE', 'DECLINE'],
+      variants: ['INCLINE', 'DECLINE'],
     },
     DEADLIFT: { variants: ['ROMANIAN', 'SUMO', 'RACK PULL'] },
     SQUAT: {},
@@ -21,20 +21,27 @@ export const WORKOUTS: Record<Equipment, Record<Movement, WorkoutConfig>> = {
     'CHEST FLY': {},
     ROW: { variants: ['TWO ARM', 'SINGLE ARM'], excludeStandard: true },
     'LAT PULLDOWN': {},
+    KICKBACKS: {},
+    'CALF RAISE': {},
+    'HIP ABDUCTION': {},
+    'HIP ADDUCTION': {},
+    'LEG CURL': {},
+    'LEG EXTENSION': {},
   },
   LANDMINE: {
     SQUAT: {},
   },
   DUMBELL: {
-    PRESS: {},
+    PRESS: { variants: ['INCLINE', 'DECLINE', 'OVERHEAD'] },
     CURL: { variants: ['HAMMER'] },
-    SQUAT: { variants: ['GOBLET', 'SPLIT'] },
+    SQUAT: { variants: ['GOBLET', 'BULGARIAN', 'SPLIT'] },
   },
   KETTLEBELL: {
     SQUAT: {},
   },
   BODYWEIGHT: {
-    SQUAT: { variants: ['PISTOL', 'SPLIT'] },
+    DIP: { variants: ['BENCH'] },
+    SQUAT: { variants: ['PISTOL', 'BULGARIAN', 'SPLIT'] },
   },
 };
 
