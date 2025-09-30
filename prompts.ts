@@ -18,12 +18,16 @@ const spaceDelemitedTermFilter = (
 export const workout = async (
   plannedWorkouts: Array<string> = [],
 ): Promise<string> => {
-  // "Planning" a workout just sorts it to the top of the list, there is still the flexibility
-  // to diverge from the plan by just selecting something else at any point.
-  const unplannedWorkouts = WORKOUT_STRINGS.filter(
-    (workout) => !plannedWorkouts.includes(workout),
-  );
-  const sortedWorkouts = [...plannedWorkouts, ...unplannedWorkouts];
+  let sortedWorkouts = WORKOUT_STRINGS;
+
+  if (plannedWorkouts.length > 0) {
+    // "Planning" a workout just sorts it to the top of the list, there is still the flexibility
+    // to diverge from the plan by just selecting something else at any point.
+    const unplannedWorkouts = WORKOUT_STRINGS.filter(
+      (workout) => !plannedWorkouts.includes(workout),
+    );
+    sortedWorkouts = [...plannedWorkouts, '-----', ...unplannedWorkouts];
+  }
 
   const { workout } = await prompts({
     type: 'autocomplete',
