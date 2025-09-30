@@ -1,4 +1,4 @@
-import prompts from 'npm:prompts@2.4.2';
+import prompts from '@terkelg/prompts';
 import { WORKOUT_STRINGS } from './workouts.ts';
 
 export const workout = async (): Promise<string> => {

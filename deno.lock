@@ -17,5 +17,10 @@
     "sisteransi@1.0.5": {
       "integrity": "sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg=="
     }
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:prompts@2.4.2"
+    ]
   }
 }
