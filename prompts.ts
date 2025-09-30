@@ -38,7 +38,7 @@ export const weight = async (initial: number = 0, increment: number = 5) => {
     type: 'number',
     name: 'weight',
     message: 'How much weight did you lift?',
-    min: increment,
+    min: 0,
     max: 300,
     increment,
     initial,
