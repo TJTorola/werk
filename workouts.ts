@@ -27,6 +27,8 @@ export const WORKOUTS: Record<Equipment, Record<Movement, WorkoutConfig>> = {
     'HIP ADDUCTION': {},
     'LEG CURL': {},
     'LEG EXTENSION': {},
+    'OBLIQUE TWIST': { variants: ['INCLINE', 'DECLINE'] },
+    'YES MOMMY': {},
   },
   LANDMINE: {
     SQUAT: {},
@@ -42,6 +44,7 @@ export const WORKOUTS: Record<Equipment, Record<Movement, WorkoutConfig>> = {
   BODYWEIGHT: {
     DIP: { variants: ['BENCH'] },
     SQUAT: { variants: ['PISTOL', 'BULGARIAN', 'SPLIT'] },
+    CRUNCH: {},
   },
 };
 
