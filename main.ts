@@ -14,9 +14,9 @@ while (true) {
   while (continueWorkout) {
     continueWorkout = false;
     weight = await prompts.weight(weight);
-    if (!weight) break;
-    reps = await prompts.reps();
-    if (!reps) break;
+    if (weight === undefined) break;
+    reps = await prompts.reps(reps);
+    if (reps === undefined) break;
     await writeLine({ workout, reps, weight });
     continueWorkout = await prompts.continueWorkout(workout);
     if (continueWorkout) {
