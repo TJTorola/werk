@@ -1,6 +1,6 @@
 import prompts from '@terkelg/prompts';
 import { WORKOUT_STRINGS } from './workouts.ts';
-import { getPlans } from './write.ts';
+import { getPlans } from './fs.ts';
 
 const spaceDelemitedTermFilter = (
   input: string,

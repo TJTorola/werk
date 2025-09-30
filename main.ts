@@ -1,6 +1,6 @@
 import { countdown } from './countdown.ts';
 import * as prompts from './prompts.ts';
-import { writeLine, getPlan } from './write.ts';
+import { writeLine, getPlan } from './fs.ts';
 
 const usePlan = await prompts.usePlan();
 

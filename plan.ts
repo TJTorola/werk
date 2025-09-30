@@ -1,5 +1,5 @@
 import * as prompts from './prompts.ts';
-import { writePlanLine } from './write.ts';
+import { writePlanLine } from './fs.ts';
 
 const planName = await prompts.planName();
 
