@@ -28,12 +28,12 @@ export const restPeriod = async (): Promise<number> => {
     min: 0,
     max: 600,
     increment: 15,
-    intial: 60,
+    initial: 60,
   });
   return restPeriod;
 };
 
-export const weight = async (intial: number, increment: number = 5) => {
+export const weight = async (initial: number = 0, increment: number = 5) => {
   const { weight } = await prompts({
     type: 'number',
     name: 'weight',
@@ -41,19 +41,19 @@ export const weight = async (intial: number, increment: number = 5) => {
     min: increment,
     max: 300,
     increment,
-    intial,
+    initial,
   });
   return weight;
 };
 
-export const reps = async () => {
+export const reps = async (initial: number = 5) => {
   const { reps } = await prompts({
     type: 'number',
     name: 'reps',
     message: 'How many reps did you do?',
     min: 0,
     max: 100,
-    intial: 5,
+    initial,
   });
   return reps;
 };
