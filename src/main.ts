@@ -1,6 +1,6 @@
 import { countdown } from './countdown.ts';
 import * as prompts from './prompts.ts';
-import { writeLine, getPlan } from './fs.ts';
+import { writeLine, getPlan, getRecord } from './fs.ts';
 
 const usePlan = await prompts.usePlan();
 
@@ -10,7 +10,10 @@ if (usePlan) {
   plannedWorkouts = await getPlan(selectedPlan);
 }
 
+const records = await getRecord();
+
 while (true) {
+  console.clear();
   const workout = await prompts.workout(plannedWorkouts);
   if (!workout) {
     break;
@@ -22,6 +25,14 @@ while (true) {
   );
 
   const restPeriod = await prompts.restPeriod();
+  records
+    .filter((record) => record.workout === workout)
+    .forEach((record) =>
+      console.log(
+        `${record.date.toLocaleString()} - Weight: ${record.weight.toString().padStart(3, '0')} - Reps: ${record.reps.toString().padStart(2, '0')}`,
+      ),
+    );
+
   let continueWorkout = true;
   let weight = 50;
   let reps = 10;
