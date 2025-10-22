@@ -32,6 +32,9 @@ export const WORKOUTS: Record<Equipment, Record<Movement, WorkoutConfig>> = {
   },
   LANDMINE: {
     SQUAT: {},
+    'CALF RAISE': { variants: ['SINGLE LEG', 'HALF CALF'] },
+    ROLLOUT: {},
+    RAINBOW: {},
   },
   DUMBELL: {
     PRESS: { variants: ['INCLINE', 'DECLINE', 'OVERHEAD'] },
@@ -45,6 +48,10 @@ export const WORKOUTS: Record<Equipment, Record<Movement, WorkoutConfig>> = {
     DIP: { variants: ['BENCH'] },
     SQUAT: { variants: ['PISTOL', 'BULGARIAN', 'SPLIT'] },
     CRUNCH: {},
+    'PULL UP': { variants: ['CHIN', 'NEUTRAL'] },
+  },
+  ROWER: {
+    ROW: { variants: ['LOW RESISTANCE', 'MED RESISTANCE', 'HIGH RESISTANCE'] },
   },
 };
 
