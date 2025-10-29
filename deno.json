@@ -8,10 +8,10 @@
   },
   "permissions": {
     "default": {
-      "env": ["NODE_DISABLE_COLORS", "TERM"],
+      "env": ["NODE_DISABLE_COLORS", "TERM", "XDG_DATA_HOME", "HOME"],
       "run": ["paplay"]
-      "read": ["./record.csv", "./plans"],
-      "write": ["./record.csv", "./plans"],
+      "read": true,
+      "write": true,
     }
   }
 }

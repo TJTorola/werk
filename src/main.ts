@@ -1,6 +1,6 @@
 import { countdown } from './countdown.ts';
 import * as prompts from './prompts.ts';
-import { writeLine, getPlan, getRecord } from './fs.ts';
+import { writeRecordLine, getPlan, getRecord } from './fs.ts';
 
 const usePlan = await prompts.usePlan();
 
@@ -42,7 +42,7 @@ while (true) {
     if (weight === undefined) break;
     reps = await prompts.reps(reps);
     if (reps === undefined) break;
-    await writeLine({ workout, reps, weight });
+    await writeRecordLine({ workout, reps, weight });
     continueWorkout = await prompts.continueWorkout(workout);
     if (continueWorkout) {
       await countdown(restPeriod);
