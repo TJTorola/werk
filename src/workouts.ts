@@ -21,6 +21,7 @@ export const WORKOUTS: Record<Equipment, Record<Movement, WorkoutConfig>> = {
     'CHEST FLY': {},
     ROW: { variants: ['TWO ARM', 'SINGLE ARM'], excludeStandard: true },
     'LAT PULLDOWN': {},
+    'LAT RAISE': {},
     KICKBACKS: {},
     'CALF RAISE': {},
     'HIP ABDUCTION': {},
@@ -39,6 +40,7 @@ export const WORKOUTS: Record<Equipment, Record<Movement, WorkoutConfig>> = {
   DUMBELL: {
     PRESS: { variants: ['INCLINE', 'DECLINE', 'OVERHEAD'] },
     CURL: { variants: ['HAMMER'] },
+    'LAT RAISE': {},
     SQUAT: { variants: ['GOBLET', 'BULGARIAN', 'SPLIT'] },
   },
   KETTLEBELL: {
