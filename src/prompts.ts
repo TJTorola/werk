@@ -45,7 +45,7 @@ export const restPeriod = async (): Promise<number> => {
     name: 'restPeriod',
     message: 'How long to rest? (seconds)',
     min: 0,
-    max: 600,
+    max: 3600, // Up to an hour (for greasing the groove)
     increment: 15,
     initial: 60,
   });
