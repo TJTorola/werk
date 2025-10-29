@@ -1,5 +1,5 @@
 const popCommand = new Deno.Command('paplay', {
-  args: ['./sounds/Morse.aiff'],
+  args: ['./src/sounds/Morse.aiff'],
 });
 
 const pop = () => popCommand.spawn();
