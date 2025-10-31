@@ -1,0 +1,13 @@
+{
+  "name": "tjtorola--werk",
+  "scripts": {
+    "start": "bun ./src/main.ts",
+    "plan": "bun ./src/plan.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

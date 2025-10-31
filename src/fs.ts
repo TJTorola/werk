@@ -1,3 +1,4 @@
+import { mkdir, readdir, appendFile } from 'node:fs/promises';
 import { WORKOUT_STRINGS } from './workouts.ts';
 
 type SetData = {
@@ -6,65 +7,66 @@ type SetData = {
   reps: number;
 };
 
-const stat = (path: string) =>
-  Deno.stat(path).catch((err) => {
-    if (err?.name === 'NotFound') {
-      return null;
-    }
-
-    throw err;
-  });
-
 const getXdgDataHome = () => {
-  const xdgDataHome = Deno.env.get('XDG_DATA_HOME');
-  if (xdgDataHome) return xdgDataHome;
-  const home = Deno.env.get('HOME');
-  if (!home) {
+  const { XDG_DATA_HOME, HOME } = process.env;
+  if (XDG_DATA_HOME) return XDG_DATA_HOME;
+  if (!HOME) {
     throw new Error(
       'Cannot determine data directory without $XDG_DATA_HOME or $HOME',
     );
   }
 
-  return `${home}/.local/share`;
+  return `${HOME}/.local/share`;
 };
 
-const getDataDir = async () => {
-  const dataDir = `${getXdgDataHome()}/werk`;
-  const dataDirStat = await stat(dataDir);
-  if (!dataDirStat) {
-    await Deno.mkdir(dataDir, { recursive: true });
-  } else if (!dataDirStat.isDirectory) {
+const getDataPath = async () => {
+  const dataPath = `${getXdgDataHome()}/werk`;
+  const dataFile = Bun.file(dataPath);
+  if (!(await dataFile.exists())) {
+    await mkdir(dataPath, { recursive: true });
+  } else if (!(await dataFile.stat().then((stat) => stat.isDirectory()))) {
     throw new Error(
-      `Data Directory "${dataDir}" exists but is not a directory`,
+      `Data Directory "${dataPath}" exists but is not a directory`,
     );
   }
 
-  return dataDir;
+  return dataPath;
 };
 
-const getPlanDir = async () => {
-  const planDir = `${await getDataDir()}/plans`;
-  const planDirStat = await stat(planDir);
-  if (!planDirStat) {
-    await Deno.mkdir(planDir, { recursive: true });
-  } else if (!planDirStat.isDirectory) {
+let dataPath: null | string = null;
+const cachedDataPath = async () => {
+  if (dataPath) return dataPath;
+  dataPath = await getDataPath();
+  return dataPath;
+};
+
+const getPlanPath = async () => {
+  const planPath = `${await cachedDataPath()}/plans`;
+  const planFile = Bun.file(planPath);
+  if (!(await planFile.exists())) {
+    await mkdir(planPath, { recursive: true });
+  } else if (!(await planFile.stat().then((stat) => stat.isDirectory()))) {
     throw new Error(
-      `Plan Directory "${planDir}" exists but is not a directory`,
+      `Plan Directory "${planPath}" exists but is not a directory`,
     );
   }
 
-  return planDir;
+  return planPath;
+};
+
+let planPath: null | string = null;
+const cachedPlanPath = async () => {
+  if (planPath) return planPath;
+  planPath = await getPlanPath();
+  return planPath;
 };
 
 const getRecordCsvPath = async () => {
-  const recordCsvPath = `${await getDataDir()}/record.csv`;
-
-  const recordStat = await stat(recordCsvPath);
-  if (!recordStat) {
-    Deno.writeTextFile(recordCsvPath, `${RECORD_HEADER}\n`, {
-      append: true,
-    });
-  } else if (!recordStat.isFile) {
+  const recordCsvPath = `${await cachedDataPath()}/record.csv`;
+  const recordCsvFile = Bun.file(recordCsvPath);
+  if (!(await recordCsvFile.exists())) {
+    recordCsvFile.write(`${RECORD_HEADER}\n`);
+  } else if (!(await recordCsvFile.stat().then((stat) => stat.isFile()))) {
     throw new Error(`Record CSV "${recordCsvPath}" exists but is not a file`);
   }
 
@@ -73,36 +75,33 @@ const getRecordCsvPath = async () => {
 
 const RECORD_HEADER = 'Workout,Weight,Reps,Date';
 export const writeRecordLine = async ({ workout, weight, reps }: SetData) =>
-  Deno.writeTextFile(
+  appendFile(
     await getRecordCsvPath(),
     `${workout},${weight},${reps},${Date()}\n`,
-    {
-      append: true,
-    },
   );
 
 export const getRecord = async (): Promise<Array<SetData & { date: Date }>> => {
-  const data = await Deno.readTextFile(await getRecordCsvPath());
-  const rows = data.split('\n').map((row) => row.split(','));
+  const text = await Bun.file(await getRecordCsvPath()).text();
+  const rows = text.split('\n').map((row) => row.split(','));
   return rows
     .map(([workout, weightStr, repsStr, dateStr], idx) => {
-      if (!WORKOUT_STRINGS.includes(workout)) {
+      if (!workout || !WORKOUT_STRINGS.includes(workout)) {
         console.log(`Unknown workout '${workout}', skipping row<${idx}>`);
         return null;
       }
-      const weight = parseInt(weightStr, 10);
+      const weight = parseInt(weightStr!, 10);
       if (weight.toString() !== weightStr || weight < 0) {
         console.log(
           `Invalid weight value '${weightStr}', skipping row<${idx}>`,
         );
         return null;
       }
-      const reps = parseInt(repsStr, 10);
+      const reps = parseInt(repsStr!, 10);
       if (reps.toString() !== repsStr || reps < 0) {
         console.log(`Invalid reps value '${repsStr}', skipping row<${idx}>`);
         return null;
       }
-      const date = new Date(dateStr);
+      const date = new Date(dateStr || '');
       // @ts-expect-error ts doesn't like this date checking trickery
       if (isNaN(date)) {
         console.log(`Invalid date value '${dateStr}', skipping row<${idx}>`);
@@ -115,17 +114,12 @@ export const getRecord = async (): Promise<Array<SetData & { date: Date }>> => {
 };
 
 export const writePlanLine = async (planName: string, workout: string) =>
-  Deno.writeTextFile(`${await getPlanDir()}/${planName}`, `${workout}\n`, {
-    append: true,
-  });
+  appendFile(`${await cachedPlanPath()}/${planName}`, `${workout}\n`);
 
-export const getPlans = async () => {
-  const entries = await Array.fromAsync(Deno.readDir(await getPlanDir()));
-  return entries.map((entry) => entry.name);
-};
+export const getPlans = async () => readdir(await cachedPlanPath());
 
 export const getPlan = async (file: string) => {
-  const data = await Deno.readTextFile(`${await getPlanDir()}/${file}`);
+  const data = await Bun.file(`${await cachedPlanPath()}/${file}`).text();
   return data
     .split('\n')
     .filter((workout) => WORKOUT_STRINGS.includes(workout));

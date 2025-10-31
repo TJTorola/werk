@@ -1,8 +1,6 @@
-const popCommand = new Deno.Command('paplay', {
-  args: ['./src/sounds/Morse.aiff'],
-});
+import { $ } from 'bun';
 
-const pop = () => popCommand.spawn();
+const pop = async () => await $`paplay ./src/sounds/Morse.aiff`.quiet();
 
 const triplePop = () => {
   setTimeout(pop, 0);
