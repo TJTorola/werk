@@ -1,5 +1,5 @@
-import color from './color.ts';
-import Prompt from './prompt.ts';
+import color from './color.js';
+import Prompt from './prompt.js';
 import { erase, cursor } from './ansi.ts';
 import { style, clear, lines, figures } from './util.ts';
 
@@ -14,7 +14,7 @@ import { style, clear, lines, figures } from './util.ts';
  * @param {Stream} [opts.stdout] The Writable stream to write readline data to
  * @param {String} [opts.error] The invalid error label
  */
-class TextPrompt extends Prompt {
+export default class TextPrompt extends Prompt {
   constructor(opts = {}) {
     super(opts);
     this.transform = style.render(opts.style);

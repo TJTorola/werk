@@ -1,0 +1,145 @@
+import TextPrompt from './text.js';
+import AutocompletePrompt from './autocomplete.js';
+import NumberPrompt from './number.js';
+import ConfirmPrompt from './confirm.js';
+
+const el = {
+  TextPrompt,
+  AutocompletePrompt,
+  NumberPrompt,
+  ConfirmPrompt,
+};
+
+const noop = (v) => v;
+
+function toPrompt(type, args, opts = {}) {
+  return new Promise((res, rej) => {
+    const p = new el[type](args);
+    const onAbort = opts.onAbort || noop;
+    const onSubmit = opts.onSubmit || noop;
+    const onExit = opts.onExit || noop;
+    p.on('state', args.onState || noop);
+    p.on('submit', (x) => res(onSubmit(x)));
+    p.on('exit', (x) => res(onExit(x)));
+    p.on('abort', (x) => rej(onAbort(x)));
+  });
+}
+
+/**
+ * Text prompt
+ * @param {string} args.message Prompt message to display
+ * @param {string} [args.initial] Default string value
+ * @param {string} [args.style="default"] Render style ('default', 'password', 'invisible')
+ * @param {function} [args.onState] On state change callback
+ * @param {function} [args.validate] Function to validate user input
+ * @param {Stream} [args.stdin] The Readable stream to listen to
+ * @param {Stream} [args.stdout] The Writable stream to write readline data to
+ * @returns {Promise} Promise with user input
+ */
+export const text = (args) => toPrompt('TextPrompt', args);
+
+/**
+ * Password prompt with masked input
+ * @param {string} args.message Prompt message to display
+ * @param {string} [args.initial] Default string value
+ * @param {function} [args.onState] On state change callback
+ * @param {function} [args.validate] Function to validate user input
+ * @param {Stream} [args.stdin] The Readable stream to listen to
+ * @param {Stream} [args.stdout] The Writable stream to write readline data to
+ * @returns {Promise} Promise with user input
+ */
+export const password = (args) => {
+  args.style = 'password';
+  return $.text(args);
+};
+
+/**
+ * Prompt where input is invisible, like sudo
+ * @param {string} args.message Prompt message to display
+ * @param {string} [args.initial] Default string value
+ * @param {function} [args.onState] On state change callback
+ * @param {function} [args.validate] Function to validate user input
+ * @param {Stream} [args.stdin] The Readable stream to listen to
+ * @param {Stream} [args.stdout] The Writable stream to write readline data to
+ * @returns {Promise} Promise with user input
+ */
+export const invisible = (args) => {
+  args.style = 'invisible';
+  return $.text(args);
+};
+
+/**
+ * Number prompt
+ * @param {string} args.message Prompt message to display
+ * @param {number} args.initial Default number value
+ * @param {function} [args.onState] On state change callback
+ * @param {number} [args.max] Max value
+ * @param {number} [args.min] Min value
+ * @param {string} [args.style="default"] Render style ('default', 'password', 'invisible')
+ * @param {Boolean} [opts.float=false] Parse input as floats
+ * @param {Number} [opts.round=2] Round floats to x decimals
+ * @param {Number} [opts.increment=1] Number to increment by when using arrow-keys
+ * @param {function} [args.validate] Function to validate user input
+ * @param {Stream} [args.stdin] The Readable stream to listen to
+ * @param {Stream} [args.stdout] The Writable stream to write readline data to
+ * @returns {Promise} Promise with user input
+ */
+export const number = (args) => toPrompt('NumberPrompt', args);
+
+/**
+ * Classic yes/no prompt
+ * @param {string} args.message Prompt message to display
+ * @param {boolean} [args.initial=false] Default value
+ * @param {function} [args.onState] On state change callback
+ * @param {Stream} [args.stdin] The Readable stream to listen to
+ * @param {Stream} [args.stdout] The Writable stream to write readline data to
+ * @returns {Promise} Promise with user input
+ */
+export const confirm = (args) => toPrompt('ConfirmPrompt', args);
+
+/**
+ * List prompt, split intput string by `seperator`
+ * @param {string} args.message Prompt message to display
+ * @param {string} [args.initial] Default string value
+ * @param {string} [args.style="default"] Render style ('default', 'password', 'invisible')
+ * @param {string} [args.separator] String separator
+ * @param {function} [args.onState] On state change callback
+ * @param {Stream} [args.stdin] The Readable stream to listen to
+ * @param {Stream} [args.stdout] The Writable stream to write readline data to
+ * @returns {Promise} Promise with user input, in form of an `Array`
+ */
+export const list = (args) => {
+  const sep = args.separator || ',';
+  return toPrompt('TextPrompt', args, {
+    onSubmit: (str) => str.split(sep).map((s) => s.trim()),
+  });
+};
+
+const byTitle = (input, choices) =>
+  Promise.resolve(
+    choices.filter(
+      (item) =>
+        item.title.slice(0, input.length).toLowerCase() === input.toLowerCase(),
+    ),
+  );
+
+/**
+ * Interactive auto-complete prompt
+ * @param {string} args.message Prompt message to display
+ * @param {Array} args.choices Array of auto-complete choices objects `[{ title, value }, ...]`
+ * @param {Function} [args.suggest] Function to filter results based on user input. Defaults to sort by `title`
+ * @param {number} [args.limit=10] Max number of results to show
+ * @param {string} [args.style="default"] Render style ('default', 'password', 'invisible')
+ * @param {String} [args.initial] Index of the default value
+ * @param {boolean} [opts.clearFirst] The first ESCAPE keypress will clear the input
+ * @param {String} [args.fallback] Fallback message - defaults to initial value
+ * @param {function} [args.onState] On state change callback
+ * @param {Stream} [args.stdin] The Readable stream to listen to
+ * @param {Stream} [args.stdout] The Writable stream to write readline data to
+ * @returns {Promise} Promise with user input
+ */
+export const autocomplete = (args) => {
+  args.suggest = args.suggest || byTitle;
+  args.choices = [].concat(args.choices || []);
+  return toPrompt('AutocompletePrompt', args);
+};

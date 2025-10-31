@@ -1,6 +1,7 @@
-import c from './color.ts';
+import c from './color.js';
+import { erase, cursor } from './ansi.ts';
 
-export const action = (key, isSelect) => {
+export const action = (key: any, isSelect: boolean) => {
   if (key.meta && key.name !== 'escape') return;
 
   if (key.ctrl) {
@@ -38,7 +39,7 @@ export const action = (key, isSelect) => {
   return false;
 };
 
-export const strip = (str) => {
+export const strip = (str: string) => {
   const pattern = [
     '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
     '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))',
@@ -48,9 +49,9 @@ export const strip = (str) => {
   return typeof str === 'string' ? str.replace(RGX, '') : str;
 };
 
-const width = (str) => [...strip(str)].length;
+const width = (str: string) => [...strip(str)].length;
 
-export const clear = (prompt, perLine) => {
+export const clear = (prompt: any, perLine: any) => {
   if (!perLine) return erase.line + cursor.to(0);
 
   let rows = 0;
@@ -94,12 +95,12 @@ export const figures = process.platform === 'win32' ? win : main;
 
 // rendering user input.
 const styles = Object.freeze({
-  password: { scale: 1, render: (input) => '*'.repeat(input.length) },
-  emoji: { scale: 2, render: (input) => '😃'.repeat(input.length) },
-  invisible: { scale: 0, render: (input) => '' },
-  default: { scale: 1, render: (input) => `${input}` },
+  password: { scale: 1, render: (input: string) => '*'.repeat(input.length) },
+  emoji: { scale: 2, render: (input: string) => '😃'.repeat(input.length) },
+  invisible: { scale: 0, render: (_input: string) => '' },
+  default: { scale: 1, render: (input: string) => `${input}` },
 });
-const render = (type) => styles[type] || styles.default;
+const render = (type: keyof typeof styles) => styles[type] || styles.default;
 
 // icon to signalize a prompt.
 const symbols = Object.freeze({
@@ -109,7 +110,7 @@ const symbols = Object.freeze({
   default: c.cyan('?'),
 });
 
-const symbol = (done, aborted, exited) =>
+const symbol = (done: boolean, aborted: boolean, exited: boolean) =>
   aborted
     ? symbols.aborted
     : exited
@@ -119,10 +120,10 @@ const symbol = (done, aborted, exited) =>
         : symbols.default;
 
 // between the question and the user's input.
-const delimiter = (completing) =>
+const delimiter = (completing: boolean) =>
   c.gray(completing ? figures.ellipsis : figures.pointerSmall);
 
-const item = (expandable, expanded) =>
+const item = (expandable: boolean, expanded: boolean) =>
   c.gray(expandable ? (expanded ? figures.pointerSmall : '+') : figures.line);
 
 export const style = {
@@ -147,8 +148,8 @@ export const wrap = (
   msg: string,
   opts: { margin?: number | string; width?: number } = {},
 ) => {
-  const tab = Number.isSafeInteger(parseInt(opts.margin))
-    ? new Array(parseInt(opts.margin)).fill(' ').join('')
+  const tab = Number.isSafeInteger(parseInt(opts.margin as string))
+    ? new Array(parseInt(opts.margin as string)).fill(' ').join('')
     : opts.margin || '';
 
   const width = opts.width;
@@ -161,8 +162,8 @@ export const wrap = (
         .reduce(
           (arr, w) => {
             if (
-              w.length + tab.length >= width ||
-              arr[arr.length - 1].length + w.length + 1 < width
+              w.length + (tab as string).length >= width! ||
+              (arr[arr.length - 1] as string).length + w.length + 1 < width!
             )
               arr[arr.length - 1] += ` ${w}`;
             else arr.push(`${tab}${w}`);

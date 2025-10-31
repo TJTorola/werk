@@ -2,7 +2,7 @@ import readline from 'node:readline';
 import { action } from './util.ts';
 import EventEmitter from 'node:events';
 import { beep, cursor } from './ansi.ts';
-import color from './color.ts';
+import color from './color.js';
 
 /**
  * Base prompt skeleton

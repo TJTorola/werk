@@ -1,5 +1,5 @@
-import color from './color.ts';
-import Prompt from './prompt.ts';
+import color from './color.js';
+import Prompt from './prompt.js';
 import { style, clear } from './util.ts';
 import { erase, cursor } from './ansi.ts';
 
